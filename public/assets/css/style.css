@@ -1,0 +1,109 @@
+:root {
+    --verde-inchis: #2D5016;
+    --verde-mediu: #4A7C2F;
+    --verde-deschis: #3B6D11;
+    --bej: #F5F0E8;
+    --bej-inchis: #E8DCC8;
+    --alb: #FFFFFF;
+    --text-inchis: #1A1A1A;
+    --text-mediu: #5F5E5A;
+}
+
+body {
+    background-color: var(--bej) !important;
+    color: var(--text-inchis);
+}
+
+.navbar {
+    background-color: var(--verde-inchis) !important;
+}
+
+.navbar-brand {
+    color: var(--bej) !important;
+    font-weight: 500;
+}
+
+.nav-link {
+    color: var(--bej-inchis) !important;
+}
+
+.nav-link:hover {
+    color: var(--alb) !important;
+}
+
+.btn-dark {
+    background-color: var(--verde-inchis) !important;
+    border-color: var(--verde-inchis) !important;
+    color: var(--bej) !important;
+}
+
+.btn-dark:hover {
+    background-color: var(--verde-mediu) !important;
+    border-color: var(--verde-mediu) !important;
+}
+
+.btn-outline-dark {
+    color: var(--verde-inchis) !important;
+    border-color: var(--verde-inchis) !important;
+}
+
+.btn-outline-dark:hover {
+    background-color: var(--verde-inchis) !important;
+    color: var(--bej) !important;
+}
+
+.card {
+    background-color: var(--alb) !important;
+    border: 0.5px solid var(--bej-inchis) !important;
+}
+
+.card-header.bg-dark {
+    background-color: var(--verde-inchis) !important;
+}
+
+.table-dark {
+    background-color: var(--verde-inchis) !important;
+}
+
+.badge.bg-secondary {
+    background-color: var(--verde-mediu) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--verde-deschis) !important;
+}
+
+.list-group-item-action.active {
+    background-color: var(--verde-inchis) !important;
+    border-color: var(--verde-inchis) !important;
+}
+
+.list-group-item-action:hover {
+    background-color: var(--bej-inchis) !important;
+}
+
+.alert-info {
+    background-color: #E8F0DE !important;
+    border-color: var(--verde-mediu) !important;
+    color: var(--verde-inchis) !important;
+}
+
+.bg-light {
+    background-color: var(--bej) !important;
+}
+
+a {
+    color: var(--verde-inchis);
+}
+
+a:hover {
+    color: var(--verde-mediu);
+}
+
+.text-warning {
+    color: #C0DD97 !important;
+}
+
+.navbar-toggler {
+    border-color: var(--bej-inchis) !important;
+}
