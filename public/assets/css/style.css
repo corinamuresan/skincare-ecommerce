@@ -107,3 +107,13 @@ a:hover {
 .navbar-toggler {
     border-color: var(--bej-inchis) !important;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+footer {
+    margin-top: auto !important;
+}

@@ -17,5 +17,5 @@ $stmt = $pdo->prepare("SELECT * FROM utilizatori WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 
-$profil = $userModel->getSkinProfile($_SESSION['user_id']);
+$profil = $userModel->getSkinProfile($_SESSION['user_id']) ?: null;
 $orders = $orderModel->getOrdersByUser($_SESSION['user_id']);

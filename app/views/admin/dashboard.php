@@ -3,160 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalizare comandă - Skincare Shop</title>
+    <title>Admin Dashboard - Skincare Shop</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/skincare-ecommerce/public/assets/css/style.css">
-    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-light">
-
+ 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="index.php">Skincare Shop</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="navbar-nav me-auto">
-                <a class="nav-link" href="index.php?page=products">Catalog</a>
-            </div>
-            <div class="navbar-nav ms-auto">
-                <?php if(isset($_SESSION['user_id'])): ?>
-                    <a class="nav-link" href="index.php?page=cart">🛒 Coș</a>
-                    <a class="nav-link" href="index.php?page=profile">Contul meu</a>
-                    <a class="nav-link" href="index.php?page=logout">Logout</a>
-                <?php endif; ?>
-            </div>
+        <a class="navbar-brand" href="index.php?page=admin">Skincare Admin</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="index.php?page=admin">Dashboard</a>
+            <a class="nav-link" href="index.php?page=admin_orders">Comenzi</a>
+            <a class="nav-link" href="index.php?page=admin_products">Produse</a>
+            <a class="nav-link" href="index.php?page=profile">Contul meu</a>
+            <a class="nav-link" href="index.php?page=logout">Logout</a>
         </div>
     </div>
 </nav>
-
+ 
 <div class="container mt-4">
-    <h3 class="mb-4">Finalizare comandă</h3>
-
-    <?php if(empty($cartItems)): ?>
-        <div class="alert alert-info">
-            Coșul tău este gol. <a href="index.php?page=products">Vezi produsele</a>
-        </div>
-    <?php else: ?>
-        <div class="row">
-            <div class="col-md-7">
-                <div class="card shadow-sm p-4 mb-4">
-                    <h5 class="mb-3">Detalii livrare</h5>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Prenume</label>
-                            <input type="text" id="prenume" class="form-control" placeholder="Prenume">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Nume</label>
-                            <input type="text" id="nume" class="form-control" placeholder="Nume">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Telefon</label>
-                            <input type="text" id="telefon" class="form-control" placeholder="07xxxxxxxx">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Județ</label>
-                            <input type="text" id="judet" class="form-control" placeholder="Județ">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Localitate</label>
-                            <input type="text" id="localitate" class="form-control" placeholder="Localitate">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Cod poștal</label>
-                            <input type="text" id="cod_postal" class="form-control" placeholder="Cod poștal">
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Adresă</label>
-                            <input type="text" id="adresa" class="form-control" placeholder="Strada, număr, bloc, apartament">
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Metodă de livrare</label>
-                            <select id="metoda_livrare" class="form-select">
-                                <option value="curier_rapid">Curier rapid — 2-3 zile lucrătoare</option>
-                                <option value="curier_standard">Curier standard — 4-5 zile lucrătoare</option>
-                                <option value="ridicare_personala">Ridicare personală</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm p-4">
-                    <h5 class="mb-3">Detalii plată</h5>
-                    <div id="card-element" class="form-control p-3 mb-3"></div>
-                    <div id="card-errors" class="text-danger small mb-3"></div>
-                    <button id="btn-pay" class="btn btn-dark w-100">
-                        Plătește <?php echo number_format($cartTotal, 2); ?> lei
-                    </button>
-                </div>
+    <h3 class="mb-4">Dashboard Admin</h3>
+ 
+    <!-- Statistici generale -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <h6 class="text-muted">Total Comenzi</h6>
+                <h2 class="fw-bold"><?php echo $stats['total_comenzi']; ?></h2>
             </div>
-
-            <div class="col-md-5">
-                <div class="card shadow-sm p-4">
-                    <h5 class="mb-3">Sumar comandă</h5>
-                    <?php foreach($cartItems as $item): ?>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span><?php echo $item['nume']; ?> x<?php echo $item['cantitate']; ?></span>
-                            <strong><?php echo number_format($item['pret'] * $item['cantitate'], 2); ?> lei</strong>
-                        </div>
-                    <?php endforeach; ?>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <strong>Total:</strong>
-                        <strong><?php echo number_format($cartTotal, 2); ?> lei</strong>
-                    </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <h6 class="text-muted">Vânzări Totale</h6>
+                <h2 class="fw-bold"><?php echo number_format($stats['vanzari_totale'], 2); ?> lei</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <h6 class="text-muted">Utilizatori</h6>
+                <h2 class="fw-bold"><?php echo $stats['total_utilizatori']; ?></h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center p-3">
+                <h6 class="text-muted">Produse</h6>
+                <h2 class="fw-bold"><?php echo $stats['total_produse']; ?></h2>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Butoane CRUD -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <a href="index.php?page=admin_products" class="btn btn-dark w-100">Gestionare Produse</a>
+        </div>
+        <div class="col-md-6">
+            <a href="index.php?page=admin_orders" class="btn btn-dark w-100">Gestionare Comenzi</a>
+        </div>
+    </div>
+ 
+    <!-- Grafice -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4" style="height:320px;">
+                <h5 class="mb-3">Vânzări pe Categorii</h5>
+                <div style="height:230px;">
+                    <canvas id="chartCategorii"></canvas>
                 </div>
             </div>
         </div>
-    <?php endif; ?>
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4" style="height:320px;">
+                <h5 class="mb-3">Status Comenzi</h5>
+                <div style="height:230px;">
+                    <canvas id="chartStatus"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- Comenzi recente -->
+    <div class="card shadow-sm p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Comenzi Recente</h5>
+            <a href="index.php?page=admin_orders" class="btn btn-dark btn-sm">Vezi toate</a>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Client</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($recentOrders as $order): ?>
+                <tr>
+                    <td><?php echo $order['id']; ?></td>
+                    <td><?php echo $order['prenume'] . ' ' . $order['nume']; ?></td>
+                    <td><?php echo number_format($order['pret_total'], 2); ?> lei</td>
+                    <td>
+                        <?php
+                        $colors = ['in_asteptare' => 'warning', 'platita' => 'success', 'in_procesare' => 'info', 'expediata' => 'primary', 'livrata' => 'success', 'anulata' => 'danger'];
+                        $labels = ['in_asteptare' => 'În așteptare', 'platita' => 'Plătită', 'in_procesare' => 'În procesare', 'expediata' => 'Expediată', 'livrata' => 'Livrată', 'anulata' => 'Anulată'];
+                        $color = $colors[$order['status']] ?? 'secondary';
+                        $label = $labels[$order['status']] ?? $order['status'];
+                        ?>
+                        <span class="badge bg-<?php echo $color; ?>"><?php echo $label; ?></span>
+                    </td>
+                    <td><?php echo date('d.m.Y H:i', strtotime($order['data_creare'])); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
-
+ 
 <script>
-    var stripe = Stripe('<?php echo STRIPE_PUBLIC_KEY; ?>');
-    var elements = stripe.elements();
-    var cardElement = elements.create('card', {
-        hidePostalCode: true
-    });
-    cardElement.mount('#card-element');
-
-    cardElement.on('change', function(event) {
-        var displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-
-    document.getElementById('btn-pay').addEventListener('click', function() {
-        var btn = this;
-        btn.disabled = true;
-        btn.textContent = 'Se procesează...';
-
-        fetch('index.php?page=create_payment_intent', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({amount: <?php echo intval(floatval(str_replace(',', '.', $cartTotal)) * 100); ?>})
-        })
-        .then(function(response) { return response.json(); })
-        .then(function(data) {
-            stripe.confirmCardPayment(data.client_secret, {
-                payment_method: {card: cardElement}
-            }).then(function(result) {
-                if (result.error) {
-                    document.getElementById('card-errors').textContent = result.error.message;
-                    btn.disabled = false;
-                    btn.textContent = 'Plătește <?php echo number_format($cartTotal, 2); ?> lei';
-                } else {
-                    window.location.href = 'index.php?page=order_success&payment_intent=' + result.paymentIntent.id;
-                }
-            });
-        });
-    });
+var ctxCat = document.getElementById('chartCategorii').getContext('2d');
+new Chart(ctxCat, {
+    type: 'bar',
+    data: {
+        labels: [<?php echo implode(',', array_map(function($c) { return '"' . $c['categorie'] . '"'; }, $vanzariCategorii)); ?>],
+        datasets: [{
+            label: 'Vânzări (lei)',
+            data: [<?php echo implode(',', array_map(function($c) { return $c['total']; }, $vanzariCategorii)); ?>],
+            backgroundColor: 'rgba(40, 60, 40, 0.7)'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } }
+    }
+});
+ 
+var ctxStatus = document.getElementById('chartStatus').getContext('2d');
+new Chart(ctxStatus, {
+    type: 'doughnut',
+    data: {
+        labels: [<?php echo implode(',', array_map(function($s) { return '"' . $s['status'] . '"'; }, $statusComenzi)); ?>],
+        datasets: [{
+            data: [<?php echo implode(',', array_map(function($s) { return $s['total']; }, $statusComenzi)); ?>],
+            backgroundColor: ['#ffc107','#198754','#0dcaf0','#0d6efd','#20c997','#dc3545']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
 </script>
-
+ 
 <?php require_once __DIR__ . '/../../views/footer.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
