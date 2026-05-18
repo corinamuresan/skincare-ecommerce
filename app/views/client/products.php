@@ -15,11 +15,20 @@
             background: #ffffff;
             border-bottom: 1px solid #f0f0f0;
             padding: 30px;
+            position: relative;
         }
         .product-img-wrapper img {
             max-height: 80%;
             max-width: 80%;
             object-fit: contain;
+        }
+        .wishlist-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.4rem;
+            line-height: 1;
+            color: red;
         }
     </style>
 </head>
@@ -93,10 +102,30 @@
         <div class="col-md-9">
             <h4 class="mb-4">Catalog Produse</h4>
             <div class="row">
+                <?php
+               $wishlistIds = [];
+                if(isset($_SESSION['user_id'])) {
+                $pdo_wl = getConnection();
+                $stmt_wl = $pdo_wl->prepare("
+                   SELECT pw.produs_id 
+                   FROM produse_wishlist pw
+                   JOIN wishlisturi w ON pw.wishlist_id = w.id
+                   WHERE w.utilizator_id = ?
+                   ");
+                $stmt_wl->execute([$_SESSION['user_id']]);
+                $wl = $stmt_wl->fetchAll();
+                foreach($wl as $item) {
+                $wishlistIds[] = $item['produs_id'];
+                }
+            }
+                ?>
                 <?php foreach($products as $p): ?>
                     <div class="col-md-4 mb-4">
                         <div class="card h-100 shadow-sm">
                             <div class="product-img-wrapper">
+                                <?php if(isset($_SESSION['user_id']) && in_array($p['id'], $wishlistIds)): ?>
+                                    <span class="wishlist-badge">♥</span>
+                                <?php endif; ?>
                                 <?php
                                 $img = $product->getProductImage($p['id']);
                                 if($img): ?>

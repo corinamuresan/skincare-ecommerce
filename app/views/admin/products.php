@@ -79,10 +79,11 @@
                         <label class="form-label">Stoc</label>
                         <input type="number" name="stoc" class="form-control" value="<?php echo $editProduct['stoc']; ?>" required>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Imagine produs (opțional)</label>
-                        <input type="file" name="imagine" class="form-control" accept="image/*">
-                    </div>
+                 <div class="col-md-6 mb-3">
+                     <label class="form-label">Imagini produs (opțional)</label>
+                     <input type="file" name="imagini[]" class="form-control" multiple accept="image/*">
+                     <small class="text-muted">Poți selecta mai multe imagini simultan</small>
+                 </div>
                 </div>
                 <button type="submit" class="btn btn-dark">Salvează modificările</button>
                 <a href="index.php?page=admin_products" class="btn btn-outline-dark ms-2">Anulează</a>
@@ -130,10 +131,11 @@
                         <label class="form-label">Stoc</label>
                         <input type="number" name="stoc" class="form-control" required>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Imagine produs</label>
-                        <input type="file" name="imagine" class="form-control" accept="image/*">
-                    </div>
+                   <div class="col-md-6 mb-3">
+                        <label class="form-label">Imagini produs</label>
+                        <input type="file" name="imagini[]" class="form-control" multiple accept="image/*">
+                        <small class="text-muted">Poți selecta mai multe imagini simultan</small>
+                   </div>
                 </div>
                 <button type="submit" class="btn btn-dark">Adaugă produs</button>
             </form>

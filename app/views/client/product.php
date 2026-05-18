@@ -48,11 +48,49 @@
             <div class="col-md-8">
                 <div class="card shadow-sm p-4">
                     <?php
-                    $img = $product->getProductImage($produs['id']);
-                    if($img): ?>
-                        <img src="../uploads/<?php echo $img; ?>" alt="<?php echo $produs['nume']; ?>"
-                             class="img-fluid rounded mb-3" style="width:100%;max-height:400px;object-fit:contain;background:#f8f9fa;">
+                    $pdo_img = getConnection();
+                    $stmt_img = $pdo_img->prepare("SELECT * FROM imagini_produse WHERE produs_id = ?");
+                    $stmt_img->execute([$produs['id']]);
+                    $imagini = $stmt_img->fetchAll();
+                    ?>
+
+                    <?php if(count($imagini) > 1): ?>
+                        <div id="carouselProdus" class="carousel slide mb-3" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                <?php foreach($imagini as $index => $img): ?>
+                                    <button type="button"
+                                            data-bs-target="#carouselProdus"
+                                            data-bs-slide-to="<?php echo $index; ?>"
+                                            <?php echo $index === 0 ? 'class="active"' : ''; ?>>
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="carousel-inner">
+                                <?php foreach($imagini as $index => $img): ?>
+                                    <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                                        <img src="../uploads/<?php echo $img['url_imagine']; ?>"
+                                             class="d-block w-100 rounded"
+                                             style="max-height:400px;object-fit:contain;background:#f8f9fa;"
+                                             alt="<?php echo $produs['nume']; ?>">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselProdus" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselProdus" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        </div>
+
+                    <?php elseif(count($imagini) === 1): ?>
+                        <img src="../uploads/<?php echo $imagini[0]['url_imagine']; ?>"
+                             class="img-fluid rounded mb-3"
+                             style="width:100%;max-height:400px;object-fit:contain;background:#f8f9fa;"
+                             alt="<?php echo $produs['nume']; ?>">
+
                     <?php endif; ?>
+
                     <span class="badge bg-secondary mb-2"><?php echo $produs['categorie_nume']; ?></span>
                     <h2><?php echo $produs['nume']; ?></h2>
                     <p class="text-muted"><?php echo $produs['brand_nume']; ?></p>

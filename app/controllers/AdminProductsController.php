@@ -26,13 +26,24 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt->execute([$nume, $brand_id, $categorie_id, $descriere, $pret, $stoc]);
         $produs_id = $pdo->lastInsertId();
 
-        if(isset($_FILES['imagine']) && $_FILES['imagine']['error'] === 0) {
+        if(isset($_FILES['imagini']) && !empty($_FILES['imagini']['name'][0])) {
             $upload_dir = __DIR__ . '/../../uploads/';
-            $filename = $produs_id . '.jpg';
-            move_uploaded_file($_FILES['imagine']['tmp_name'], $upload_dir . $filename);
+            
+            if(!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
 
-            $stmt = $pdo->prepare("INSERT INTO imagini_produse (produs_id, url_imagine) VALUES (?, ?)");
-            $stmt->execute([$produs_id, $filename]);
+            foreach($_FILES['imagini']['tmp_name'] as $key => $tmp_name) {
+                if($_FILES['imagini']['error'][$key] === 0) {
+                    $extensie = pathinfo($_FILES['imagini']['name'][$key], PATHINFO_EXTENSION);
+                    $filename = uniqid() . '.' . $extensie;
+                    
+                    if(move_uploaded_file($tmp_name, $upload_dir . $filename)) {
+                        $stmt = $pdo->prepare("INSERT INTO imagini_produse (produs_id, url_imagine) VALUES (?, ?)");
+                        $stmt->execute([$produs_id, $filename]);
+                    }
+                }
+            }
         }
 
         $success = 'Produsul a fost adăugat cu succes!';
@@ -51,19 +62,23 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt = $pdo->prepare("UPDATE produse SET nume = ?, brand_id = ?, categorie_id = ?, descriere = ?, pret = ?, stoc = ? WHERE id = ?");
         $stmt->execute([$nume, $brand_id, $categorie_id, $descriere, $pret, $stoc, $produs_id]);
 
-        if(isset($_FILES['imagine']) && $_FILES['imagine']['error'] === 0) {
+        if(isset($_FILES['imagini']) && !empty($_FILES['imagini']['name'][0])) {
             $upload_dir = __DIR__ . '/../../uploads/';
-            $filename = $produs_id . '.jpg';
-            move_uploaded_file($_FILES['imagine']['tmp_name'], $upload_dir . $filename);
+            
+            if(!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
 
-            $stmt = $pdo->prepare("SELECT id FROM imagini_produse WHERE produs_id = ?");
-            $stmt->execute([$produs_id]);
-            if($stmt->fetch()) {
-                $stmt = $pdo->prepare("UPDATE imagini_produse SET url_imagine = ? WHERE produs_id = ?");
-                $stmt->execute([$filename, $produs_id]);
-            } else {
-                $stmt = $pdo->prepare("INSERT INTO imagini_produse (produs_id, url_imagine) VALUES (?, ?)");
-                $stmt->execute([$produs_id, $filename]);
+            foreach($_FILES['imagini']['tmp_name'] as $key => $tmp_name) {
+                if($_FILES['imagini']['error'][$key] === 0) {
+                    $extensie = pathinfo($_FILES['imagini']['name'][$key], PATHINFO_EXTENSION);
+                    $filename = uniqid() . '.' . $extensie;
+                    
+                    if(move_uploaded_file($tmp_name, $upload_dir . $filename)) {
+                        $stmt = $pdo->prepare("INSERT INTO imagini_produse (produs_id, url_imagine) VALUES (?, ?)");
+                        $stmt->execute([$produs_id, $filename]);
+                    }
+                }
             }
         }
 
