@@ -53,17 +53,17 @@ class User {
         return $stmt->fetch();
     }
 
-    public function saveSkinProfile($user_id, $tip_ten, $predispus_acnee, $sensibilitate, $sensibilitati = '') {
+    public function saveSkinProfile($user_id, $tip_ten, $predispus_acnee, $sensibilitate, $nivel_hidratare = 'mediu', $sensibilitati = '') {
         $stmt = $this->pdo->prepare("SELECT id FROM profiluri_ten WHERE utilizator_id = ?");
         $stmt->execute([$user_id]);
         $existing = $stmt->fetch();
 
         if($existing) {
-            $stmt = $this->pdo->prepare("UPDATE profiluri_ten SET tip_ten = ?, predispus_acnee = ?, sensibilitate = ?, nivel_hidratare = 'mediu', sensibilitati = ? WHERE utilizator_id = ?");
-            return $stmt->execute([$tip_ten, $predispus_acnee, $sensibilitate, $sensibilitati, $user_id]);
+            $stmt = $this->pdo->prepare("UPDATE profiluri_ten SET tip_ten = ?, predispus_acnee = ?, sensibilitate = ?, nivel_hidratare = ?, sensibilitati = ? WHERE utilizator_id = ?");
+            return $stmt->execute([$tip_ten, $predispus_acnee, $sensibilitate, $nivel_hidratare, $sensibilitati, $user_id]);
         } else {
-            $stmt = $this->pdo->prepare("INSERT INTO profiluri_ten (utilizator_id, tip_ten, predispus_acnee, sensibilitate, nivel_hidratare, sensibilitati) VALUES (?, ?, ?, ?, 'mediu', ?)");
-            return $stmt->execute([$user_id, $tip_ten, $predispus_acnee, $sensibilitate, $sensibilitati]);
+            $stmt = $this->pdo->prepare("INSERT INTO profiluri_ten (utilizator_id, tip_ten, predispus_acnee, sensibilitate, nivel_hidratare, sensibilitati) VALUES (?, ?, ?, ?, ?, ?)");
+            return $stmt->execute([$user_id, $tip_ten, $predispus_acnee, $sensibilitate, $nivel_hidratare, $sensibilitati]);
         }
     }
 
@@ -80,6 +80,7 @@ class User {
         $tip_ten = 'normal';
         $predispus_acnee = 0;
         $sensibilitate = 0;
+        $nivel_hidratare = 'mediu';
         $sensibilitati = [];
 
         foreach($raspunsuri as $r) {
@@ -113,10 +114,20 @@ class User {
             if($ordine == 9 && strpos($text, 'nu am') === false) {
                 $sensibilitati[] = $r['text_raspuns'];
             }
+
+            if($ordine == 3) {
+                if(strpos($text, 'tensiune') !== false || strpos($text, 'uscăciune') !== false || strpos($text, 'uscat') !== false) {
+                    $nivel_hidratare = 'scazut';
+                } elseif(strpos($text, 'lucios') !== false) {
+                    $nivel_hidratare = 'ridicat';
+                } else {
+                    $nivel_hidratare = 'mediu';
+                }
+            }
         }
 
         $sensibilitati_str = implode(',', $sensibilitati);
 
-        return $this->saveSkinProfile($user_id, $tip_ten, $predispus_acnee, $sensibilitate, $sensibilitati_str);
+        return $this->saveSkinProfile($user_id, $tip_ten, $predispus_acnee, $sensibilitate, $nivel_hidratare, $sensibilitati_str);
     }
 }
